@@ -1,0 +1,17 @@
+C:\Users\z00se04391\Desktop\MieruAlgo\MieruAlgo\MieruAlgo\bin\Debug\MieruAlgo.exe.config
+C:\Users\z00se04391\Desktop\MieruAlgo\MieruAlgo\MieruAlgo\obj\Debug\MieruAlgo.csprojResolveAssemblyReference.cache
+C:\Users\z00se04391\Desktop\MieruAlgo\MieruAlgo\MieruAlgo\obj\Debug\MainWindow.g.cs
+C:\Users\z00se04391\Desktop\MieruAlgo\MieruAlgo\MieruAlgo\obj\Debug\App.g.cs
+C:\Users\z00se04391\Desktop\MieruAlgo\MieruAlgo\MieruAlgo\obj\Debug\MieruAlgo_MarkupCompile.cache
+C:\Users\z00se04391\Desktop\MieruAlgo\MieruAlgo\MieruAlgo\obj\Debug\MieruAlgo_MarkupCompile.lref
+C:\Users\z00se04391\Desktop\MieruAlgo\MieruAlgo\MieruAlgo\bin\Debug\MieruAlgo.exe
+C:\Users\z00se04391\Desktop\MieruAlgo\MieruAlgo\MieruAlgo\bin\Debug\MieruAlgo.pdb
+C:\Users\z00se04391\Desktop\MieruAlgo\MieruAlgo\MieruAlgo\obj\Debug\MainWindow.baml
+C:\Users\z00se04391\Desktop\MieruAlgo\MieruAlgo\MieruAlgo\obj\Debug\MieruAlgo.g.resources
+C:\Users\z00se04391\Desktop\MieruAlgo\MieruAlgo\MieruAlgo\obj\Debug\MieruAlgo.Properties.Resources.resources
+C:\Users\z00se04391\Desktop\MieruAlgo\MieruAlgo\MieruAlgo\obj\Debug\MieruAlgo.csproj.GenerateResource.Cache
+C:\Users\z00se04391\Desktop\MieruAlgo\MieruAlgo\MieruAlgo\obj\Debug\MieruAlgo.exe
+C:\Users\z00se04391\Desktop\MieruAlgo\MieruAlgo\MieruAlgo\obj\Debug\MieruAlgo.pdb
+C:\Users\z00se04391\Desktop\MieruAlgo\MieruAlgo\bin\Debug\MieruAlgo.exe.config
+C:\Users\z00se04391\Desktop\MieruAlgo\MieruAlgo\obj\Debug\MieruAlgo.exe
+C:\Users\z00se04391\Desktop\MieruAlgo\MieruAlgo\obj\Debug\MieruAlgo.pdb
