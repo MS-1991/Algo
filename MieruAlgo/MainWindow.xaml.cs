@@ -17,369 +17,366 @@ using System.Windows.Shapes;
 
 namespace MieruAlgo
 {
-	/// <summary>
-	/// MainWindow.xaml の相互作用ロジック
-	/// </summary>
-	public partial class MainWindow : Window
-	{
+    /// <summary>
+    /// MainWindow.xaml の相互作用ロジック
+    /// </summary>
+    public partial class MainWindow : Window
+    {
+        //色定義
+        SolidColorBrush green = new SolidColorBrush(Color.FromRgb(0, 255, 0));
+        SolidColorBrush red = new SolidColorBrush(Color.FromRgb(255, 0, 0));
+        SolidColorBrush blue = new SolidColorBrush(Color.FromRgb(0, 0, 255));
+        SolidColorBrush white = new SolidColorBrush(Color.FromRgb(255, 255, 255));
+        SolidColorBrush yellow = new SolidColorBrush(Color.FromRgb(255, 255, 0));
+        Stopwatch sw = new Stopwatch();
 
-		//色定義
-		SolidColorBrush green = new SolidColorBrush(Color.FromRgb(0, 255, 0));
-		SolidColorBrush red = new SolidColorBrush(Color.FromRgb(255, 0, 0));
-		SolidColorBrush blue = new SolidColorBrush(Color.FromRgb(0, 0, 255));
-		SolidColorBrush white = new SolidColorBrush(Color.FromRgb(255, 255, 255));
-		SolidColorBrush yellow = new SolidColorBrush(Color.FromRgb(255, 255, 0));
-		Stopwatch sw = new Stopwatch();
+        int comparison;
+        int[] array, karray;
+        int array_size;
+        public int ARRAY_SIZE = 100;
+        public double MARGIN_HEIGHT = 0;
+        public int DILAYTIME = 10;
 
-		int comparison;
-		int array_access_count;
-		int swap_count;
-		bool delay_flag;
-		int[] array, karray;
+        public MainWindow()
+        {
+            InitializeComponent();
+            Initialize();
+        }
 
-		static int ARRAY_SIZE = 100;
-		static double MARGIN_HEIGHT = 0;
-		static int DILAYTIME = 10;
+        private void cmdReset_Click(object sender, RoutedEventArgs e)
+        {
+            Initialize();
+        }
+        private void cmdBubble_Click(object sender, RoutedEventArgs e)
+        {
+            Sort_Initialize();  //ソート前処理
+            Bubble_Sort();
+        }
+        private void cmdmerge_Click(object sender, RoutedEventArgs e)
+        {
+            Sort_Initialize();  //ソート前処理
+            merge_sort(array, ARRAY_SIZE);
+        }
+        private void cmdBogo_Click(object sender, RoutedEventArgs e)
+        {
+            Sort_Initialize();  //ソート前処理
+            Bogosort();
+        }
+        private void Delay_Time_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            if (Delay_Time.Text == "" || Delay_Time.Text == "null")
+            {
+                Delay_Time.Text = "10";
+            }
+            DILAYTIME = int.Parse(Delay_Time.Text);
+        }
 
-		public MainWindow()
-		{
-			InitializeComponent();
-			// コンテンツに合わせて自動的にWindow幅と高さをリサイズする
-			this.SizeToContent = SizeToContent.WidthAndHeight;
-			initialize();
-		}
+        private void Delay_Time_PreviewTextInput(object sender, TextCompositionEventArgs e)
+        {
+            // 0-9のみ
+            e.Handled = !new Regex("[0-9]").IsMatch(e.Text);
+        }
 
-		private void cmdPlay_Click(object sender, RoutedEventArgs e)
-		{
-			initialize();
-		}
-		private void cmdStop_Click(object sender, RoutedEventArgs e)
-		{
-			sort_initialize();  //ソート前処理
-			Bubble_Sort();
-		}
-		private void cmdStop_Click2(object sender, RoutedEventArgs e)
-		{
-			sort_initialize();  //ソート前処理
-			mergesort(ARRAY_SIZE);
-		}
-		private void HandleCheck(object sender, RoutedEventArgs e)
-		{
-			delay_flag = true;
-		}
-		private void HandleUnchecked(object sender, RoutedEventArgs e)
-		{
-			delay_flag = false;
-		}
+        private void Array_Size_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            if (Array_Size.Text == "" || Array_Size.Text == "null" || int.Parse(Array_Size.Text) <= 0)
+            {
+                Array_Size.Text = "100";
+            }
+            array_size = int.Parse(Array_Size.Text);
+        }
+        private void Array_Size_PreviewTextInput(object sender, TextCompositionEventArgs e)
+        {
+            // 0-9のみ
+            e.Handled = !new Regex("[0-9]").IsMatch(e.Text);
+        }
 
-		private void textBoxPrice_PreviewTextInput(object sender, TextCompositionEventArgs e)
-		{
-			// 0-9のみ
-			e.Handled = !new Regex("[0-9]").IsMatch(e.Text);
-			DILAYTIME = int.Parse(Delay_Time.Text);
-		}
-		
-		private void Array_Size_TextInpu(object sender, TextCompositionEventArgs e)
-		{
-			// 0-9のみ
-			e.Handled = !new Regex("[0-9]").IsMatch(e.Text);
-			ARRAY_SIZE = int.Parse(Delay_Time.Text);
+        void Initialize()
+        {
+            int temp;
+            int j = 0;
+            DILAYTIME = int.Parse(Delay_Time.Text);
+            ARRAY_SIZE = array_size;
+            array = new int[ARRAY_SIZE];
+            karray = new int[ARRAY_SIZE];
+            Random rd = new Random();
 
-			if (ARRAY_SIZE > sort_StackPanel.Height) {
-				ARRAY_SIZE = (int)sort_StackPanel.Height;
-			}
-		}
+            sort_StackPanel.Children.Clear();
 
-		void initialize()
-		{
-			int temp = 0;
-			int j = 0;
-			DILAYTIME = int.Parse(Delay_Time.Text);
-			ARRAY_SIZE = int.Parse(Array_Size.Text);
-			array = new int[ARRAY_SIZE];
-			karray = new int[ARRAY_SIZE];
-			Random rd = new Random();
-			sort_StackPanel.Children.Clear();
+            MARGIN_HEIGHT = (sort_StackPanel.Height - 10);
 
-			if (isDelay.IsChecked == true) { delay_flag = true; }
-			else { delay_flag = false; }
+            for (int i = 0; i < ARRAY_SIZE; i++)
+            {
+                temp = rd.Next(1, ARRAY_SIZE + 1);//1~ARRAY_SIZEの間でランダム
+                bool temp_flag = false;
+                //重複排除
+                for (int k = 0; k < ARRAY_SIZE; k++)
+                {
+                    if (temp_flag == true)
+                    {
+                        k = 0;
+                        temp_flag = false;
+                    }
+                    if (karray[k] == temp)
+                    {
+                        temp = rd.Next(1, ARRAY_SIZE + 1);
+                        temp_flag = true;
+                    }
+                }
 
-			MARGIN_HEIGHT = (sort_StackPanel.Height - 10);
+                array[i] = temp;
+                karray[i] = array[i];
 
-			for (int i = 0; i < ARRAY_SIZE; i++)
-			{
-				temp = rd.Next(1, ARRAY_SIZE);//1~ARRAY_SIZEの間でランダム
+                Rectangle rect = new Rectangle()
+                {
+                    Fill = white,
+                    Width = (sort_StackPanel.Width / ARRAY_SIZE)
+                };
+                sort_StackPanel.Children.Add(rect);
+            }
 
-				//重複排除
-				for (int k = 0; k < ARRAY_SIZE; k++)
-				{
-					if (karray[k] == temp)
-					{
-						temp = rd.Next(1, ARRAY_SIZE);
-						k = 0;
-					}
-				}
+            foreach (Rectangle current in sort_StackPanel.Children) //StackPanelから要素を取り出す
+            {
+                if (current == null)
+                {
+                    Application.Current.Shutdown();
+                    return;
+                }
+                else
+                {
+                    try
+                    {
+                        current.Height = array[j] * (sort_StackPanel.Height / ARRAY_SIZE);
+                        current.Margin = new Thickness(0, MARGIN_HEIGHT - current.Height, 0, 0);
+                        current.Fill = white;
+                    }
+                    catch (Exception) { }
+                }
+                j++;
+            }
+        }
+        int Sort_Initialize()
+        {
+            comparison = 0;
+            compare_count.Content = "0"; //比較回数のLabel.Contentを0にする
 
-				array[i] = temp;
-				karray[i] = array[i];
+            foreach (Rectangle r in sort_StackPanel.Children)//StackPanelの中の要素を一つずつ取り出す
+            {
+                r.Fill = white;//すべてwhiteにする
+            }
+            sw.Reset();
+            sw.Start();
+            return 0;
+        }
+        int add_comparison()
+        {
+            comparison++;
+            compare_count.Content = comparison.ToString();
+            return 0;
+        }
 
-				Rectangle rect = new Rectangle() {
-					Fill = white,
-					Width = (sort_StackPanel.Width / ARRAY_SIZE )
-				};
-				sort_StackPanel.Children.Add(rect);
-			}
-			
-			foreach (Rectangle current in sort_StackPanel.Children) //StackPanelから要素を取り出す
-			{
-				if (current == null)
-				{
-					Application.Current.Shutdown();
-					return;
-				}
-				else
-				{
-					try
-					{
-						current.Height = array[j];
-						current.Margin = new Thickness(0, MARGIN_HEIGHT - array[j], 0, 0);
-						current.Fill = white;
-					}
-					catch (Exception) { }
-				}
-				j++;
-			}
-		}
-		int sort_initialize()
-		{
-			swap_count = 0;
-			comparison = 0;
-			array_access_count = 0;
-			compare_count.Content = "0"; //比較回数のLabel.Contentを0にする
-			access_count.Content = "0";//アレイアクセスのLabel.Contentを0にする
+        async Task<int> swap(int[] array, int from, int to)
+        {
+            Rectangle current, current2;
+            int temp = array[from];
 
-			foreach (Rectangle r in sort_StackPanel.Children)//StackPanelの中の要素を一つずつ取り出す
-			{
-				r.Fill = white;//すべてwhiteにする
-			}
-			sw.Reset();
-			sw.Start();
-			return 0;
-		}
-		int add_comparison()
-		{
-			comparison++;
-			compare_count.Content = comparison.ToString();
-			return 0;
-		}
-		int array_access_counter()
-		{
-			array_access_count++;
-			access_count.Content = array_access_count.ToString();
-			return 0;
-		}
+            current = FindNameRect_nolonger(from);
+            current2 = FindNameRect_nolonger(to);
 
-		async Task<int> swap(int[] arr, int from, int to)
-		{
-			Rectangle current, current2;
+            current.Height = current2.Height;
+            current.Margin = new Thickness(0, MARGIN_HEIGHT - current.Height, 0, 0);
+            current2.Height = array[from] * (sort_StackPanel.Height / ARRAY_SIZE);
+            current2.Margin = new Thickness(0, MARGIN_HEIGHT - current2.Height, 0, 0);
 
-			int temp = arr[from];
+            #region #表示系更新処理
+            current.Fill = yellow;
+            current2.Fill = red;
+            await TaskDelay();
+            #endregion
 
-			current = FindNameRect_nolonger(from);
-			current2 = FindNameRect_nolonger(to);
+            array[from] = array[to];
+            array[to] = temp;
 
-			current.Height = current2.Height;
-			current.Margin = new Thickness(0, MARGIN_HEIGHT - current2.Height, 0, 0);
-			current2.Height = arr[from];
-			current2.Margin = new Thickness(0, MARGIN_HEIGHT - arr[from], 0, 0);
+            current.Fill = white;
+            current2.Fill = white;
+            return 0;
+        }
 
-			#region #表示系更新処理
-			current.Fill = yellow;
-			current2.Fill = red;
-			await TaskDelay();
-			array_access_counter();
-			array_access_counter();
-			array_access_counter();
-			array_access_counter();
-			#endregion
+        Rectangle FindNameRect_nolonger(int index)
+        {
+            Rectangle r = null;
+            int cindex = 0;
+            foreach (Rectangle rr in sort_StackPanel.Children)
+            {
+                if (cindex == index)
+                {
+                    r = rr;
+                    break;
+                }
+                cindex++;
+            }
+            return r;
+        }
 
-			arr[from] = arr[to];
-			arr[to] = temp;
+        /****************************************************************/
+        /*
+        /****************************************************************/
+        async void Bubble_Sort()
+        {
+            int arr_num;
+            int sct_num;
 
-			current.Fill = white;
-			current2.Fill = white;
-			return 0;
-		}
+            for (arr_num = 0; arr_num < (ARRAY_SIZE - 1); arr_num++)
+            {
+                for (sct_num = (ARRAY_SIZE - 1); sct_num > arr_num; sct_num--)
+                {
+                    #region #表示系更新処理
+                    add_comparison();
+                    #endregion
 
-		Rectangle FindNameRect_nolonger(int index)
-		{
-			Rectangle r = null;
-			int cindex = 0;
-			foreach (Rectangle rr in sort_StackPanel.Children)
-			{
-				if (cindex == index)
-				{
-					r = rr;
-					break;
-				}
-				cindex++;
-			}
-			return r;
-		}
+                    //左隣りの要素が大きければ入れ替え
+                    if (array[sct_num - 1] > array[sct_num])
+                    {
+                        await swap(array, sct_num, sct_num - 1);
+                    }
+                }
+            }
+            sw.Stop();
+        }
 
-		async void Bubble_Sort()
-		{
-			Rectangle current;
-			int arr_sct_num, bubble_sct_num;
-			for (arr_sct_num = 0; arr_sct_num < (ARRAY_SIZE - 1); arr_sct_num++)
-			{
-				current = FindNameRect_nolonger(arr_sct_num);
-				current.Fill = green;
-				for (bubble_sct_num = (ARRAY_SIZE - 1); bubble_sct_num > arr_sct_num; bubble_sct_num--)
-				{
-					#region #表示系更新処理
-					array_access_counter(); 
-					array_access_counter();
-					add_comparison();
-					#endregion
-					if (array[bubble_sct_num - 1] > array[bubble_sct_num])
-					{
-						await swap(array, bubble_sct_num, bubble_sct_num - 1);
-					}
-				}
-				current.Fill = white;
-			}
-			#region #ソート終了処理
-			sw.Stop();
-			ShowMessage();
-			#endregion
-		}
-		async void mergesort(int num)
-		{
-			int[] buf;
-			sort_initialize(); //ソート前処理
-			buf = new int[ARRAY_SIZE]; //バッファ
-			Rectangle current; //System.Windows.Shapes
-			int rght, rend;
-			int i, j, m;
+        /****************************************************************/
+        /*マージソート (昇順)
+        /****************************************************************/
+        void merge_sort(int[] array, int size)
+        {
+            int[] buf;
+            // 作業用領域を確保
+            buf = new int[ARRAY_SIZE]; //バッファ
 
-			for (int k = 1; k < num; k *= 2)
-			{
-				for (int left = 0; left + k < num; left += k * 2)
-				{
-					rght = left + k;
-					rend = rght + k;
-					if (rend > num)
-					{
-						rend = num;
-					}
+            // 配列全体を対象にする
+            merge_sort_rec(array, 0, size - 1, buf);
+        }
 
-					m = left;
-					i = left;
-					j = rght;
+        /*
+            マージソート (再帰部分、昇順)
+        */
+        async Task<int> merge_sort_rec(int[] arr, int begin, int end, int[] work)
+        {
+            // 要素が１つしかなければ終了
+            if (begin >= end)
+            {
+                return 0;
+            }
 
-					while (i < rght && j < rend)
-					{
+            // ２つのデータ列に分割して、それぞれを再帰的に処理
+            int mid = (begin + end) / 2;
+            await merge_sort_rec(arr, begin, mid, work);
+            await merge_sort_rec(arr, mid + 1, end, work);
 
-						if (array[i] <= array[j])
-						{
-							current = FindNameRect_nolonger(i); //i番目のRectangleへの参照を返すメソッド
-							current.Fill = red;
-							buf[m] = array[i]; i++;
-							await TaskDelay();
-						}
-						else
-						{
-							current = FindNameRect_nolonger(j);
-							current.Fill = red;
-							buf[m] = array[j]; j++;
-							await TaskDelay();
-						}
-						#region #表示系更新処理
-						array_access_counter();
-						array_access_counter(); //配列へのアクセス回数をカウントするメソッド
-						array_access_counter();
-						add_comparison(); //こっちは比較回数をカウントするメソッド
-						current.Fill = white;
-						#endregion
-						m++;
-					}
-					while (i < rght)
-					{
-						current = FindNameRect_nolonger(i);
-						#region #表示系更新処理
-						current.Fill = red;
-						array_access_counter();
-						#endregion
-						buf[m] = array[i];
-						#region #表示系更新処理
-						await TaskDelay();
-						current.Fill = white;
-						#endregion
-						i++; m++;
-					}
-					while (j < rend)
-					{
-						current = FindNameRect_nolonger(j);
-						#region #表示系更新処理
-						current.Fill = red;
-						array_access_counter();
-						#endregion
-						buf[m] = array[j];
-						#region #表示系更新処理
-						await TaskDelay();
-						current.Fill = white;
-						#endregion
-						j++; m++;
-					}
-					for (m = left; m < rend; m++)
-					{
-						current = FindNameRect_nolonger(m);
-						#region #表示系更新処理
-						current.Fill = blue;
-						array_access_counter();
-						#endregion
-						array[m] = buf[m];
-						current.Height = buf[m];
-						current.Margin = new Thickness(0, MARGIN_HEIGHT - buf[m], 0, 0);
-						#region #表示系更新処理
-						await TaskDelay();
-						current.Fill = white;
-						#endregion
-					}
-				}
-			}
-			#region #ソート終了処理
-			sw.Stop();
-			ShowMessage();
-			#endregion
-		}
+            // マージ
+            await merge(arr, begin, end, mid, work);
+            return 0;
+        }
 
-		void ShowMessage()
-		{
-			if (delay_flag == true)
-			{
-				MessageBox.Show("計算時間：" + (sw.ElapsedMilliseconds - swap_count) + "ミリ秒");
-			}
-			else
-			{
-				MessageBox.Show("計算時間：" + sw.ElapsedMilliseconds + "ミリ秒");
-			}
-		}
+        /*
+            マージ
+        */
+        async Task<int> merge(int[] arr, int begin, int end, int mid, int[] work)
+        {
+            Rectangle current;
 
-		async Task<int> TaskDelay()
-		{
-			if (delay_flag == true)
-			{
-				await Task.Delay(DILAYTIME);
-				swap_count += DILAYTIME;
-			}
-			return 0;
-		}
+            // 前半の要素を作業用配列へ
+            for (int i = begin; i <= mid; ++i)
+            {
 
-		void mark_red(Rectangle current_rect)
-		{
-			current_rect.Fill = red;
-		}
-	}
+                work[i] = arr[i];
+                current = FindNameRect_nolonger(i);
+                current.Fill = green;
+                current.Height = work[i] * (sort_StackPanel.Height / ARRAY_SIZE); ;
+                current.Margin = new Thickness(0, MARGIN_HEIGHT - current.Height, 0, 0);
+                await TaskDelay();
+
+            }
+
+            // 後半の要素を逆順に作業用配列へ
+            for (int i = mid + 1, j = end; i <= end; ++i, --j)
+            {
+                work[i] = arr[j];
+                current = FindNameRect_nolonger(i);
+                current.Fill = green;
+                current.Height = work[i] * (sort_StackPanel.Height / ARRAY_SIZE); ;
+                current.Margin = new Thickness(0, MARGIN_HEIGHT - current.Height, 0, 0);
+                await TaskDelay();
+            }
+
+            // 作業用配列の両端から取り出した要素をマージ
+            {
+                int i = begin;
+                int j = end;
+                for (int k = begin; k <= end; ++k)
+                {
+                    current = FindNameRect_nolonger(k);
+                    current.Fill = red;
+                    add_comparison();
+                    // 昇順にソートするので、小さい方の要素を結果の配列へ移す。
+                    if (work[i] <= work[j])
+                    { // == の場合は先頭を優先すると安定なソートになる
+                        arr[k] = work[i];
+                        current.Height = array[k] * (sort_StackPanel.Height / ARRAY_SIZE); ;
+                        current.Margin = new Thickness(0, MARGIN_HEIGHT - current.Height, 0, 0);
+                        await TaskDelay();
+                        ++i;
+                    }
+                    else
+                    {
+                        arr[k] = work[j];
+                        current.Height = array[k] * (sort_StackPanel.Height / ARRAY_SIZE); ;
+                        current.Margin = new Thickness(0, MARGIN_HEIGHT - current.Height, 0, 0);
+                        await TaskDelay();
+                        --j;
+                    }
+                    current.Fill = white;
+                }
+            }
+            return 0;
+        }
+
+        async Task<int> Bogosort()
+        {
+            Rectangle current, current2;
+            while (!isSorted(array))
+            {
+                array = array.OrderBy(i => Guid.NewGuid()).ToArray();
+
+                for (int i = 0; i < array.Length; i++)
+                {
+                    current = FindNameRect_nolonger(i);
+                    current.Height = array[i] * (sort_StackPanel.Height / ARRAY_SIZE); ;
+                    current.Margin = new Thickness(0, MARGIN_HEIGHT - current.Height, 0, 0);
+                }
+                await TaskDelay();
+            }
+            return 0;
+        }
+
+        private static bool isSorted(int[] arr)
+        {
+            for (int i = 1; i < arr.Length; i++)
+            {
+                if (arr[i - 1] > arr[i])
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+
+        async Task<string> TaskDelay()
+        {
+            await Task.Delay(DILAYTIME);
+            access_count.Content = sw.ElapsedMilliseconds;
+            return "";
+        }
+    }
 }
