@@ -36,8 +36,9 @@ namespace MieruAlgo
         public int ARRAY_SIZE = 100;
         public double MARGIN_HEIGHT = 0;
         public int DILAYTIME = 10;
+		const int INSERTCHENGENUM = 5; //クイックソート　挿入ソート切り替え用
 
-        public MainWindow()
+		public MainWindow()
         {
             InitializeComponent();
             Initialize();
@@ -62,7 +63,18 @@ namespace MieruAlgo
             Sort_Initialize();  //ソート前処理
             Bogosort();
         }
-        private void Delay_Time_TextChanged(object sender, TextChangedEventArgs e)
+		private void cmdInsert_Click(object sender, RoutedEventArgs e)
+		{
+			Sort_Initialize();  //ソート前処理
+			InsertSort(array,0,array.Length);
+		}
+		private void cmdQuick_Click(object sender, RoutedEventArgs e)
+		{
+			Sort_Initialize();  //ソート前処理
+			QuickSort(array, 0, array.Length - 1);
+		}
+
+		private void Delay_Time_TextChanged(object sender, TextChangedEventArgs e)
         {
             if (Delay_Time.Text == "" || Delay_Time.Text == "null")
             {
@@ -219,7 +231,7 @@ namespace MieruAlgo
         }
 
         /****************************************************************/
-        /*
+        /*バブルソート
         /****************************************************************/
         async void Bubble_Sort()
         {
@@ -250,17 +262,17 @@ namespace MieruAlgo
         void merge_sort(int[] array, int size)
         {
             int[] buf;
-            // 作業用領域を確保
-            buf = new int[ARRAY_SIZE]; //バッファ
+           
+            buf = new int[ARRAY_SIZE];  // 作業用領域を確保
 
-            // 配列全体を対象にする
-            merge_sort_rec(array, 0, size - 1, buf);
+			// 配列全体を対象にする
+			merge_sort_rec(array, 0, size - 1, buf);
         }
 
-        /*
-            マージソート (再帰部分、昇順)
-        */
-        async Task<int> merge_sort_rec(int[] arr, int begin, int end, int[] work)
+		/****************************************************************/
+		/*	マージソート(再帰部分)
+		/****************************************************************/
+		async Task<int> merge_sort_rec(int[] arr, int begin, int end, int[] work)
         {
             // 要素が１つしかなければ終了
             if (begin >= end)
@@ -278,10 +290,10 @@ namespace MieruAlgo
             return 0;
         }
 
-        /*
-            マージ
-        */
-        async Task<int> merge(int[] arr, int begin, int end, int mid, int[] work)
+		/****************************************************************/
+		/*	マージ
+		/****************************************************************/
+		async Task<int> merge(int[] arr, int begin, int end, int mid, int[] work)
         {
             Rectangle current;
 
@@ -341,9 +353,12 @@ namespace MieruAlgo
             return 0;
         }
 
-        async Task<int> Bogosort()
+		/****************************************************************/
+		/*	ボゴソート
+		/****************************************************************/
+		async Task<int> Bogosort()
         {
-            Rectangle current, current2;
+            Rectangle current;
             while (!isSorted(array))
             {
                 array = array.OrderBy(i => Guid.NewGuid()).ToArray();
@@ -359,7 +374,10 @@ namespace MieruAlgo
             return 0;
         }
 
-        private static bool isSorted(int[] arr)
+		/****************************************************************/
+		/*	ソートチェック
+		/****************************************************************/
+		private static bool isSorted(int[] arr)
         {
             for (int i = 1; i < arr.Length; i++)
             {
@@ -371,8 +389,100 @@ namespace MieruAlgo
             return true;
         }
 
+		/****************************************************************/
+		/*	ソート
+		/****************************************************************/
+		async Task<int> QuickSort()
+		{
+			Rectangle current;
+			while (!isSorted(array))
+			{
+				array = array.OrderBy(i => Guid.NewGuid()).ToArray();
 
-        async Task<string> TaskDelay()
+				for (int i = 0; i < array.Length; i++)
+				{
+					current = FindNameRect_nolonger(i);
+					current.Height = array[i] * (sort_StackPanel.Height / ARRAY_SIZE); ;
+					current.Margin = new Thickness(0, MARGIN_HEIGHT - current.Height, 0, 0);
+				}
+				await TaskDelay();
+			}
+			return 0;
+		}
+
+		/****************************************************************/
+		/*	挿入ソート
+		/****************************************************************/
+		async Task<int> InsertSort(int[] arr, int first, int last)
+		{
+			for (int i = first + 1; i <= last; i++)
+			{
+				for (int j = i; j > first && arr[j - 1].CompareTo(arr[j]) > 0; --j)
+				{
+					await swap(arr, j, j - 1);
+				}
+			}
+			return 0;
+		}
+
+
+		async Task<int> QuickSort(int[] arr, int first, int last)
+		{
+			int pivot;
+
+			// 要素数が少なくなってきたら挿入ソートに切り替え
+			if (last - first < INSERTCHENGENUM)
+			{
+				await InsertSort(array, first, last);
+				return 0;
+			}
+
+			// 枢軸決定（配列の先頭、ど真ん中、末尾の3つの値の中央値を使用。）
+			pivot = Median3(arr[first], arr[(first + last) / 2], arr[last]);
+
+			Rectangle current;
+			current = FindNameRect_nolonger(pivot);
+			current.Fill = green;
+			await TaskDelay();
+
+			// 左右分割
+			int l = first;
+			int r = last;
+
+			while (l <= r)
+			{
+				while (l < last && arr[l].CompareTo(pivot) < 0) l++;
+				while (r > first && arr[r].CompareTo(pivot) >= 0) r--;
+				if (l > r) break;
+				await swap(arr, l, r);
+				l++; r--;
+			}
+
+			// 再帰呼び出し
+			await QuickSort(arr, first, l - 1);
+			await QuickSort(arr, l, last);
+			current.Fill = white;
+			return 0;
+		}
+
+		
+		// 3つの値の中央値算出
+		private static int Median3(int a, int b, int c)
+		{
+			int low = a, hight = b;
+			if (a > b)
+			{
+				low = b;
+				hight = a;
+			}
+			if (c <= low) return low;
+			if (c >= hight) return hight;
+			return c;
+		}
+
+
+
+		async Task<string> TaskDelay()
         {
             await Task.Delay(DILAYTIME);
             access_count.Content = sw.ElapsedMilliseconds;

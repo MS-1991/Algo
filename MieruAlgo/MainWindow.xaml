@@ -16,31 +16,43 @@
 
         <ToolBarTray Orientation="Horizontal" Margin="0,3,0,458" Grid.ColumnSpan="3" >
             <ToolBar HorizontalAlignment="Left" Width="263" Margin="0,-5,-127,10">
-                <Button Margin="0,3" Name="cmdPlay" Click="cmdReset_Click">
+                <Button Margin="0,3" Name="cmdReset" Click="cmdReset_Click">
 
                     <StackPanel>
                         <Rectangle Width="20" Height="20" Stroke="SteelBlue" StrokeThickness="3" Fill="SteelBlue" />
                         <TextBlock>Reset</TextBlock>
                     </StackPanel>
                 </Button>
-                <Button Margin="0,3" Name="cmdStop" Click="cmdBubble_Click">
+                <Button Margin="0,3" Name="cmdBubble" Click="cmdBubble_Click">
 
                     <StackPanel>
                         <Rectangle Width="30" Height="30" Stroke="SteelBlue" StrokeThickness="3" Fill="SteelBlue" />
                         <TextBlock>Bubble</TextBlock>
                     </StackPanel>
                 </Button>
-                <Button Margin="0,3" Name="cmdStop2" Click="cmdmerge_Click">
+                <Button Margin="0,3" Name="cmdmerge" Click="cmdmerge_Click">
                     <StackPanel>
                         <Rectangle Width="30" Height="30" Stroke="SteelBlue" StrokeThickness="3" Fill="SteelBlue" />
                         <TextBlock>Marge</TextBlock>
                     </StackPanel>
                 </Button>
 
-                <Button Margin="0,3" Name="cmdStop3" Click="cmdBogo_Click">
+                <Button Margin="0,3" Name="cmdBogo" Click="cmdBogo_Click">
                     <StackPanel>
                         <Rectangle Width="30" Height="30" Stroke="SteelBlue" StrokeThickness="3" Fill="SteelBlue" />
                         <TextBlock>Bogo</TextBlock>
+                    </StackPanel>
+                </Button>
+                <Button Margin="0,3" Name="cmdInsert" Click="cmdInsert_Click">
+                    <StackPanel>
+                        <Rectangle Width="30" Height="30" Stroke="SteelBlue" StrokeThickness="3" Fill="SteelBlue" />
+                        <TextBlock>Insert</TextBlock>
+                    </StackPanel>
+                </Button>
+                <Button Margin="0,3" Name="cmdQuick" Click="cmdQuick_Click">
+                    <StackPanel>
+                        <Rectangle Width="30" Height="30" Stroke="SteelBlue" StrokeThickness="3" Fill="SteelBlue" />
+                        <TextBlock>Quick</TextBlock>
                     </StackPanel>
                 </Button>
             </ToolBar>
